@@ -1,0 +1,137 @@
+@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Dynamic Hierarchies with Records and RadzenDataGrid</PageTitle>
+
+<RadzenDataGrid IsLoading="_loading"
+				Data="@_boxes"
+				TItem="Box"
+				AllowColumnResize="true"
+				AllowPaging="true"
+				AllowSorting="true"
+				PageSizeOptions="_pageSizeOptions"
+				PagerHorizontalAlign="HorizontalAlign.Center"
+				ShowPagingSummary="true"
+				ExpandMode="DataGridExpandMode.Single"
+				RowExpand="OnRowExpand"
+				RowRender="@OnRowRender">
+	<Template Context="box">
+		<RadzenDataGrid Data="@box.Items"
+						TItem="Item"
+						AllowPaging="true"
+						PageSize="5"
+						PagerHorizontalAlign="HorizontalAlign.Center"
+						ShowPagingSummary="true">
+			<Columns>
+				<RadzenDataGridColumn Width="10em" Property="ProductNo" Title="Product No" />
+				<RadzenDataGridColumn Width="20em" Property="Description" Title="Description" />
+				<RadzenDataGridColumn Width="10em" Property="Price" Title="Price" />
+				<RadzenDataGridColumn Width="10em" Property="Weight" Title="Weight" />
+			</Columns>
+		</RadzenDataGrid>
+	</Template>
+	<Columns>
+		<RadzenDataGridColumn Property="Width" Title="Width" />
+		<RadzenDataGridColumn Property="Height" Title="Height" />
+		<RadzenDataGridColumn Property="Length" Title="Length" />
+	</Columns>
+</RadzenDataGrid>
+
+<style>
+	.rz-column-title-content {
+		font-weight: bold;
+		white-space: wrap !important;
+	}
+
+	button[type='submit'] {
+		margin-top: 1em !important;
+		margin-left: 1.5rem;
+	}
+
+	section {
+		display: inline-block;
+	}
+
+	fieldset {
+		margin-bottom: 1em !important;
+	}
+
+	th {
+		vertical-align: bottom;
+	}
+
+	label, legend {
+		font-weight: bold;
+	}
+
+	tr.bad-change td {
+		background-color: yellow !important;
+	}
+
+	tr.bad-change:nth-child(even) td {
+		background-color: #e5e619 !important;
+	}
+
+	ul {
+		padding-left: 0;
+		list-style: none;
+	}
+</style>
+
+@code {
+	record Box {
+		public int Width { get; set; }
+		public int Height { get; set; }
+		public int Length { get; set; }
+		public IList<Item>? Items { get; set; }
+	}
+
+	record Item {
+		public string ProductNo { get; set; }
+		public string Description { get; set; }
+		public decimal Price { get; set; }
+		public decimal Weight { get; set; }
+	}
+
+	private readonly IEnumerable<int> _pageSizeOptions = [4, 8, 10];
+	private IList<Box>? _boxes = new List<Box>();
+	private bool _loading;
+
+	protected override async Task OnInitializedAsync() {
+		await base.OnInitializedAsync();
+
+		_loading = true;
+		try {
+			await Task.Delay(TimeSpan.FromSeconds(1));
+			_boxes = new List<Box> {
+				new Box { Width = 10, Height = 20, Length = 30 },
+				new Box { Width = 15, Height = 25, Length = 35 },
+				new Box { Width = 20, Height = 30, Length = 40 }
+			};
+		} finally {
+			_loading = false;
+		}
+	}
+
+	private void OnRowRender(RowRenderEventArgs<Box> args) {
+		args.Expandable = true;
+	}
+
+	private async Task OnRowExpand(Box box) {
+		if (box.Items != null && !box.Items.Any())
+			return;
+
+		await Task.Delay(TimeSpan.FromSeconds(1));
+		var items = new List<Item>();
+		for (var i = 0; i < 100000; i++) {
+			items.Add(new Item {
+				ProductNo = $"P{i:D5}",
+				Description = $"Product {i}",
+				Price = (decimal)(i % 100) + 0.99m,
+				Weight = (decimal)(i % 10) + 0.1m
+			});
+		}
+		box.Items = items;
+	}
+}
+
