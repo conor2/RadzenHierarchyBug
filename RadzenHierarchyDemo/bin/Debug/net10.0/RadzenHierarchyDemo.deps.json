@@ -1,0 +1,41 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "RadzenHierarchyDemo/1.0.0": {
+        "dependencies": {
+          "Radzen.Blazor": "8.4.0"
+        },
+        "runtime": {
+          "RadzenHierarchyDemo.dll": {}
+        }
+      },
+      "Radzen.Blazor/8.4.0": {
+        "runtime": {
+          "lib/net10.0/Radzen.Blazor.dll": {
+            "assemblyVersion": "8.4.0.0",
+            "fileVersion": "8.4.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "RadzenHierarchyDemo/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Radzen.Blazor/8.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GUMKQWePssb1mHIGiXbmMFEeBE/xaBrxDVnPzDyps4YBe1Jhaaav2ZihsbbCDKq5CM1JxXnWp4whTQhqsCa1HQ==",
+      "path": "radzen.blazor/8.4.0",
+      "hashPath": "radzen.blazor.8.4.0.nupkg.sha512"
+    }
+  }
+}

@@ -1,0 +1,107 @@
+@page "/hierarchy-records"
+@using RadzenHierarchyDemo.Models
+@using Radzen.Blazor
+@rendermode InteractiveServer
+
+<PageTitle>Hierarchy with Records (Bug Demo)</PageTitle>
+
+<h1>RadzenDataGrid Hierarchy with Records</h1>
+
+<p>This page demonstrates the bug where nested tables in a hierarchy don't expand properly when using C# record types.</p>
+<p><strong>Expected:</strong> Click the expand arrow next to a Department, then expand an Employee to see their Tasks.</p>
+<p><strong>Actual:</strong> The Employee rows might not expand properly (bug demonstration).</p>
+
+<RadzenDataGrid @ref="departmentGrid" Data="@departments" TItem="Department" AllowFiltering="true" AllowPaging="true" PageSize="5">
+    <Template Context="department">
+        <RadzenDataGrid @ref="employeeGrids[department.Id]" Data="@department.Employees" TItem="Employee">
+            <Columns>
+                <RadzenDataGridColumn TItem="Employee" Property="Id" Title="Employee ID" />
+                <RadzenDataGridColumn TItem="Employee" Property="Name" Title="Employee Name" />
+            </Columns>
+            <Template Context="employee">
+                <RadzenDataGrid Data="@employee.Tasks" TItem="WorkTask">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="WorkTask" Property="Id" Title="Task ID" />
+                        <RadzenDataGridColumn TItem="WorkTask" Property="Description" Title="Task Description" />
+                    </Columns>
+                </RadzenDataGrid>
+            </Template>
+        </RadzenDataGrid>
+    </Template>
+    <Columns>
+        <RadzenDataGridColumn TItem="Department" Property="Id" Title="Department ID" />
+        <RadzenDataGridColumn TItem="Department" Property="Name" Title="Department Name" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    RadzenDataGrid<Department>? departmentGrid;
+    Dictionary<int, RadzenDataGrid<Employee>> employeeGrids = new();
+    List<Department> departments = new();
+
+    protected override void OnInitialized()
+    {
+        // Create sample data with records
+        departments = new List<Department>
+        {
+            new Department(1, "Engineering")
+            {
+                Employees = new List<Employee>
+                {
+                    new Employee(101, "Alice", 1)
+                    {
+                        Tasks = new List<WorkTask>
+                        {
+                            new WorkTask(1001, "Design API", 101),
+                            new WorkTask(1002, "Write unit tests", 101)
+                        }
+                    },
+                    new Employee(102, "Bob", 1)
+                    {
+                        Tasks = new List<WorkTask>
+                        {
+                            new WorkTask(1003, "Code review", 102),
+                            new WorkTask(1004, "Fix bugs", 102)
+                        }
+                    }
+                }
+            },
+            new Department(2, "Marketing")
+            {
+                Employees = new List<Employee>
+                {
+                    new Employee(201, "Charlie", 2)
+                    {
+                        Tasks = new List<WorkTask>
+                        {
+                            new WorkTask(2001, "Create campaign", 201),
+                            new WorkTask(2002, "Social media posts", 201)
+                        }
+                    },
+                    new Employee(202, "Diana", 2)
+                    {
+                        Tasks = new List<WorkTask>
+                        {
+                            new WorkTask(2003, "Market research", 202)
+                        }
+                    }
+                }
+            },
+            new Department(3, "Sales")
+            {
+                Employees = new List<Employee>
+                {
+                    new Employee(301, "Eve", 3)
+                    {
+                        Tasks = new List<WorkTask>
+                        {
+                            new WorkTask(3001, "Client meetings", 301),
+                            new WorkTask(3002, "Prepare proposals", 301),
+                            new WorkTask(3003, "Follow-up calls", 301)
+                        }
+                    }
+                }
+            }
+        };
+    }
+}

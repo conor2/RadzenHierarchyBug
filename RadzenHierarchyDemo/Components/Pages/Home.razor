@@ -1,0 +1,49 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>RadzenDataGrid Hierarchy Bug Demonstration</h1>
+
+<div class="alert alert-info">
+    <h4>Issue Description</h4>
+    <p>
+        This application demonstrates a bug in <code>RadzenDataGrid</code> that prevents nested tables 
+        in a hierarchy from expanding properly when they are loaded dynamically from a collection of 
+        <strong>record</strong> objects.
+    </p>
+    <p>
+        The workaround is to use <strong>classes</strong> instead of records.
+    </p>
+</div>
+
+<h2>Navigation</h2>
+<ul>
+    <li>
+        <a href="/hierarchy-records"><strong>Records (Bug Demo)</strong></a> - 
+        Shows the issue with C# record types where nested hierarchies may not expand properly
+    </li>
+    <li>
+        <a href="/hierarchy-classes"><strong>Classes (Workaround)</strong></a> - 
+        Shows that the same structure works correctly when using class types
+    </li>
+</ul>
+
+<h2>Test Scenario</h2>
+<p>Both pages display a three-level hierarchy:</p>
+<ol>
+    <li><strong>Departments</strong> - Top level</li>
+    <li><strong>Employees</strong> - Nested under departments</li>
+    <li><strong>Tasks</strong> - Nested under employees</li>
+</ol>
+
+<h2>Expected Behavior</h2>
+<p>
+    When clicking the expand arrow next to a Department row, you should see the Employees. 
+    When clicking the expand arrow next to an Employee row, you should see their Tasks.
+</p>
+
+<h2>Current Behavior</h2>
+<ul>
+    <li><strong>With Records:</strong> The nested expansion may not work properly</li>
+    <li><strong>With Classes:</strong> The nested expansion works as expected</li>
+</ul>

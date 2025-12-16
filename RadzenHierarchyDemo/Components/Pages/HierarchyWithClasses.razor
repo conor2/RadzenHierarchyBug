@@ -1,0 +1,128 @@
+@page "/hierarchy-classes"
+@using RadzenHierarchyDemo.Models
+@using Radzen.Blazor
+@rendermode InteractiveServer
+
+<PageTitle>Hierarchy with Classes (Workaround)</PageTitle>
+
+<h1>RadzenDataGrid Hierarchy with Classes</h1>
+
+<p>This page demonstrates the workaround where nested tables work properly when using C# class types.</p>
+<p><strong>Action:</strong> Click the expand arrow next to a Department, then expand an Employee to see their Tasks.</p>
+<p><strong>Expected:</strong> All hierarchy levels should expand properly.</p>
+
+<RadzenDataGrid @ref="departmentGrid" Data="@departments" TItem="DepartmentClass" AllowFiltering="true" AllowPaging="true" PageSize="5">
+    <Template Context="department">
+        <RadzenDataGrid @ref="employeeGrids[department.Id]" Data="@department.Employees" TItem="EmployeeClass">
+            <Columns>
+                <RadzenDataGridColumn TItem="EmployeeClass" Property="Id" Title="Employee ID" />
+                <RadzenDataGridColumn TItem="EmployeeClass" Property="Name" Title="Employee Name" />
+            </Columns>
+            <Template Context="employee">
+                <RadzenDataGrid Data="@employee.Tasks" TItem="TaskClass">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="TaskClass" Property="Id" Title="Task ID" />
+                        <RadzenDataGridColumn TItem="TaskClass" Property="Description" Title="Task Description" />
+                    </Columns>
+                </RadzenDataGrid>
+            </Template>
+        </RadzenDataGrid>
+    </Template>
+    <Columns>
+        <RadzenDataGridColumn TItem="DepartmentClass" Property="Id" Title="Department ID" />
+        <RadzenDataGridColumn TItem="DepartmentClass" Property="Name" Title="Department Name" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    RadzenDataGrid<DepartmentClass>? departmentGrid;
+    Dictionary<int, RadzenDataGrid<EmployeeClass>> employeeGrids = new();
+    List<DepartmentClass> departments = new();
+
+    protected override void OnInitialized()
+    {
+        // Create sample data with classes
+        departments = new List<DepartmentClass>
+        {
+            new DepartmentClass
+            {
+                Id = 1,
+                Name = "Engineering",
+                Employees = new List<EmployeeClass>
+                {
+                    new EmployeeClass
+                    {
+                        Id = 101,
+                        Name = "Alice",
+                        DepartmentId = 1,
+                        Tasks = new List<TaskClass>
+                        {
+                            new TaskClass { Id = 1001, Description = "Design API", EmployeeId = 101 },
+                            new TaskClass { Id = 1002, Description = "Write unit tests", EmployeeId = 101 }
+                        }
+                    },
+                    new EmployeeClass
+                    {
+                        Id = 102,
+                        Name = "Bob",
+                        DepartmentId = 1,
+                        Tasks = new List<TaskClass>
+                        {
+                            new TaskClass { Id = 1003, Description = "Code review", EmployeeId = 102 },
+                            new TaskClass { Id = 1004, Description = "Fix bugs", EmployeeId = 102 }
+                        }
+                    }
+                }
+            },
+            new DepartmentClass
+            {
+                Id = 2,
+                Name = "Marketing",
+                Employees = new List<EmployeeClass>
+                {
+                    new EmployeeClass
+                    {
+                        Id = 201,
+                        Name = "Charlie",
+                        DepartmentId = 2,
+                        Tasks = new List<TaskClass>
+                        {
+                            new TaskClass { Id = 2001, Description = "Create campaign", EmployeeId = 201 },
+                            new TaskClass { Id = 2002, Description = "Social media posts", EmployeeId = 201 }
+                        }
+                    },
+                    new EmployeeClass
+                    {
+                        Id = 202,
+                        Name = "Diana",
+                        DepartmentId = 2,
+                        Tasks = new List<TaskClass>
+                        {
+                            new TaskClass { Id = 2003, Description = "Market research", EmployeeId = 202 }
+                        }
+                    }
+                }
+            },
+            new DepartmentClass
+            {
+                Id = 3,
+                Name = "Sales",
+                Employees = new List<EmployeeClass>
+                {
+                    new EmployeeClass
+                    {
+                        Id = 301,
+                        Name = "Eve",
+                        DepartmentId = 3,
+                        Tasks = new List<TaskClass>
+                        {
+                            new TaskClass { Id = 3001, Description = "Client meetings", EmployeeId = 301 },
+                            new TaskClass { Id = 3002, Description = "Prepare proposals", EmployeeId = 301 },
+                            new TaskClass { Id = 3003, Description = "Follow-up calls", EmployeeId = 301 }
+                        }
+                    }
+                }
+            }
+        };
+    }
+}
